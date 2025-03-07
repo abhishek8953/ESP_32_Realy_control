@@ -1,0 +1,86 @@
+
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+#grid{
+  display: grid;
+  margin-top: 20px;
+  margin-left: 50px;
+  gap: 10px;
+  width: 60rem;
+  grid-template-columns: repeat(3,1fr);
+}
+
+.grid_item{
+  margin-right: 50px;
+  border: 1px solid black;
+  border: 2px solid #ddd;
+  border-radius: 12px; /* Soft rounded corners */
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8); /* Soft shadow */
+ 
+  
+}
+
+
+.modern-button {
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  margin: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modern-button:hover {
+  
+  transform: scale(1.05);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  
+}
+
+
+.modern-button-OFF{
+  margin-left: 20px;
+  background: linear-gradient(135deg, #ff0202, #9b0000);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+
+}
+
+.modern-button-ON{
+  margin-left: 10px;
+  background: linear-gradient(135deg, #00ff00, #5ca101);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+}
+
+
+
+
+
+/* @media (max-width: 480px) {
+  #grid {
+    grid-template-columns: repeat(1, 1fr); /* 1 column for very small screens */
+  }
+} */
