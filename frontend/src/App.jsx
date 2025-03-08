@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import Loading from "./Loading";
-const url = import.meta.env.VITE_API_BACKEND_URL
+const url = import.meta.env.VITE_API_BACKEND_URL+"/v2"
 console.log(import.meta.env.VITE_API_BACKEND_URL);
 function App() {
 	const [state, setState] = useState([0, 0, 0, 0, 0, 0, 0, 0]);
