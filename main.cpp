@@ -3,12 +3,12 @@
 #include <ArduinoJson.h>
 
 // Replace with your network credentials
-const char* ssid = "UU@ALAKNANDA_GR";
-const char* password = "uu@alaknandar";
+const char* ssid = "Abhishek";
+const char* password = "1234554321";
 
 // Firebase Realtime Database URL and authentication key
-const char* firebaseHost = "";
-const char* firebaseAuth = "";
+const char* firebaseHost = "https://esp32-d7eba-default-rtdb.asia-southeast1.firebasedatabase.app";
+const char* firebaseAuth = "kGF88gjHu78AUMzdGojIFxjJYrAWqRFwz9tuW8a6";
 
 // Relay pins (changed pin 2 to 25)
 const int relayPins[8] = {25, 4, 5, 18, 19, 21, 22, 23};
@@ -23,7 +23,7 @@ const int wifiStatusPin = 2;
 void initRelays() {
   for (int i = 0; i < 8; i++) {
     pinMode(relayPins[i], OUTPUT);
-    digitalWrite(relayPins[i], LOW); // Turn off all relays initially
+    digitalWrite(relayPins[i], HIGH); // Turn off all relays initially
   }
 }
 
@@ -33,7 +33,7 @@ void updateRelays(const JsonObject& json) {
     String relayKey = "relay" + String(i + 1);
     if (json.containsKey(relayKey)) {
       bool state = json[relayKey];
-      digitalWrite(relayPins[i], state ? HIGH : LOW); // HIGH to turn off, LOW to turn on
+      digitalWrite(relayPins[i], state ? LOW : HIGH); // HIGH to turn off, LOW to turn on
       relayStates[i] = state;
       Serial.printf("Relay %d set to %s\n", i + 1, state ? "ON" : "OFF");
     }
@@ -56,9 +56,9 @@ void handleFirebaseData(const JsonObject& json) {
       int relayIndex = path.substring(6).toInt() - 1;
       if (relayIndex >= 0 && relayIndex < 8 && data.is<bool>()) {
         bool state = data.as<bool>();
-        digitalWrite(relayPins[relayIndex], state ? HIGH : LOW); // HIGH to turn off, LOW to turn on
+        digitalWrite(relayPins[relayIndex], state ? LOW : HIGH); // HIGH to turn off, LOW to turn on
         relayStates[relayIndex] = state;
-        Serial.printf("Relay %d set to %s\n", relayIndex + 1, state ? "ON" : "OFF");
+        Serial.printf("Relay %d set to %s\n", relayIndex + 1, state ? "OFF" : "ON");
       }
     }
   }
