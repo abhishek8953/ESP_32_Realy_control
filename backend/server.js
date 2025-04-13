@@ -1,6 +1,20 @@
 
 const express =require("express")
-const {db,app:router} =require("./router.js")
+const connectDB =require("./db/index.js");
+const {db,app:router} =require("./app.js")
+
+
+
+// connnectDB to mongoDB
+connectDB()
+.then(() => {
+    app.listen(process.env.PORT || 8000, () => {
+        console.log(`⚙️ Server is running at port : ${process.env.PORT}`);
+    })
+})
+.catch((err) => {
+    console.log("MONGO db connection failed !!! ", err);
+})
 
 
 
@@ -18,4 +32,5 @@ db.ref(".info/connected").on("value", (snapshot) => {
 		console.log("❌ Firebase Database NOT connected!");
 	}
 });
+
 
