@@ -61,7 +61,7 @@ function App() {
 				<div id="grid" onClick={submitHandler}>
 					<div className="grid_item">
 						<div style={{ marginLeft: "40px" }}>
-							<h3 style={{ color: "#b22" }}>Made By Abhishek</h3>
+							<h3 style={{ color: "#b22" }}></h3>
 						</div>
 						<button
 							style={{ background: `${state[0] ? "red" : ""}` }}
