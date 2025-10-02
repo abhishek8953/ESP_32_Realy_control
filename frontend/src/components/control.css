@@ -1,0 +1,120 @@
+/* Container styling */
+#grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Grid layout for buttons */
+.grid_item {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 600px;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+/* General button styles */
+.modern-button,
+.modern-button-OFF,
+.modern-button-ON {
+    padding: 1rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.3s ease;
+    word-break: break-word;
+}
+
+/* Hover effect */
+.hover:hover {
+    transform: scale(1.05);
+    background-color: #e0e0e0;
+}
+
+/* ON and OFF button specific */
+.modern-button-OFF {
+    background-color: #ff4d4d;
+    color: white;
+}
+.modern-button-ON {
+    background-color: #4caf50;
+    color: white;
+}
+.modern-button-OFF:hover {
+    background-color: #cc0000;
+}
+.modern-button-ON:hover {
+    background-color: #2e7d32;
+}
+
+/* ----------- Responsive Breakpoints ----------- */
+
+/* Large desktops (>= 1200px) */
+@media (min-width: 1200px) {
+    .grid_item {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Medium screens (>= 992px and < 1200px) */
+@media (max-width: 1199px) {
+    .grid_item {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Tablets and small laptops (>= 768px and < 992px) */
+@media (max-width: 991px) {
+    .grid_item {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile screens (>= 576px and < 768px) */
+@media (max-width: 767px) {
+    .grid_item {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .modern-button,
+    .modern-button-OFF,
+    .modern-button-ON {
+        font-size: 0.95rem;
+        padding: 0.75rem;
+    }
+}
+
+/* Extra small mobile (< 576px) */
+@media (max-width: 575px) {
+    .grid_item {
+        grid-template-columns: repeat(1, 1fr);
+        gap: 0.6rem;
+    }
+
+    .modern-button,
+    .modern-button-OFF,
+    .modern-button-ON {
+        font-size: 0.9rem;
+        padding: 0.7rem;
+    }
+}
+
+/* Ultra small screens like iPhone SE (< 400px) */
+@media (max-width: 400px) {
+    .modern-button,
+    .modern-button-OFF,
+    .modern-button-ON {
+        font-size: 0.8rem;
+        padding: 0.6rem;
+    }
+}

@@ -1,132 +1,190 @@
 #include <WiFi.h>
-#include <HTTPClient.h>
+#include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
 
-// Replace with your network credentials
-const char* ssid = "Abhishek";
+// WiFi credentials
+const char* ssid     = "Abhishek";
 const char* password = "1234554321";
 
-// Firebase Realtime Database URL and authentication key
-const char* firebaseHost = "";
-const char* firebaseAuth = "";
+// Firebase credentials
+const char* firebaseHost = "esp32-d7eba-default-rtdb.asia-southeast1.firebasedatabase.app";
+const char* firebaseAuth = "kGF88gjHu78AUMzdGojIFxjJYrAWqRFwz9tuW8a6";
 
-// Relay pins (changed pin 2 to 25)
-const int relayPins[11] = {5, 18, 19, 22, 23, 13, 12, 14, 26, 27, 32};
+// Root CA certificate (Google root) ...
+static const char FIREBASE_ROOT_CA[] PROGMEM = R"EOF(
+-----BEGIN CERTIFICATE-----
+MIIFYjCCBEqgAwIBAgIQd70NbNs2+RrqIQ/E8FjTDTANBgkqhkiG9w0BAQsFADBX
+MQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEQMA4GA1UE
+CxMHUm9vdCBDQTEbMBkGA1UEAxMSR2xvYmFsU2lnbiBSb290IENBMB4XDTIwMDYx
+OTAwMDA0MloXDTI4MDEyODAwMDA0MlowRzELMAkGA1UEBhMCVVMxIjAgBgNVBAoT
+GUdvb2dsZSBUcnVzdCBTZXJ2aWNlcyBMTEMxFDASBgNVBAMTC0dUUyBSb290IFIx
+MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAthECix7joXebO9y/lD63
+ladAPKH9gvl9MgaCcfb2jH/76Nu8ai6Xl6OMS/kr9rH5zoQdsfnFl97vufKj6bwS
+iV6nqlKr+CMny6SxnGPb15l+8Ape62im9MZaRw1NEDPjTrETo8gYbEvs/AmQ351k
+KSUjB6G00j0uYODP0gmHu81I8E3CwnqIiru6z1kZ1q+PsAewnjHxgsHA3y6mbWwZ
+DrXYfiYaRQM9sHmklCitD38m5agI/pboPGiUU+6DOogrFZYJsuB6jC511pzrp1Zk
+j5ZPaK49l8KEj8C8QMALXL32h7M1bKwYUH+E4EzNktMg6TO8UpmvMrUpsyUqtEj5
+cuHKZPfmghCN6J3Cioj6OGaK/GP5Afl4/Xtcd/p2h/rs37EOeZVXtL0m79YB0esW
+CruOC7XFxYpVq9Os6pFLKcwZpDIlTirxZUTQAs6qzkm06p98g7BAe+dDq6dso499
+iYH6TKX/1Y7DzkvgtdizjkXPdsDtQCv9Uw+wp9U7DbGKogPeMa3Md+pvez7W35Ei
+Eua++tgy/BBjFFFy3l3WFpO9KWgz7zpm7AeKJt8T11dleCfeXkkUAKIAf5qoIbap
+sZWwpbkNFhHax2xIPEDgfg1azVY80ZcFuctL7TlLnMQ/0lUTbiSw1nH69MG6zO0b
+9f6BQdgAmD06yK56mDcYBZUCAwEAAaOCATgwggE0MA4GA1UdDwEB/wQEAwIBhjAP
+BgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTkrysmcRorSCeFL1JmLO/wiRNxPjAf
+BgNVHSMEGDAWgBRge2YaRQ2XyolQL30EzTSo//z9SzBgBggrBgEFBQcBAQRUMFIw
+JQYIKwYBBQUHMAGGGWh0dHA6Ly9vY3NwLnBraS5nb29nL2dzcjEwKQYIKwYBBQUH
+MAKGHWh0dHA6Ly9wa2kuZ29vZy9nc3IxL2dzcjEuY3J0MDIGA1UdHwQrMCkwJ6Al
+oCOGIWh0dHA6Ly9jcmwucGtpLmdvb2cvZ3NyMS9nc3IxLmNybDA7BgNVHSAENDAy
+MAgGBmeBDAECATAIBgZngQwBAgIwDQYLKwYBBAHWeQIFAwIwDQYLKwYBBAHWeQIF
+AwMwDQYJKoZIhvcNAQELBQADggEBADSkHrEoo9C0dhemMXoh6dFSPsjbdBZBiLg9
+NR3t5P+T4Vxfq7vqfM/b5A3Ri1fyJm9bvhdGaJQ3b2t6yMAYN/olUazsaL+yyEn9
+WprKASOshIArAoyZl+tJaox118fessmXn1hIVw41oeQa1v1vg4Fv74zPl6/AhSrw
+9U5pCZEt4Wi4wStz6dTZ/CLANx8LZh1J7QJVj2fhMtfTJr9w4z30Z209fOU0iOMy
++qduBmpvvYuR7hZL6Dupszfnw0Skfths18dG9ZKb59UhvmaSGZRVbNQpsg3BZlvi
+d0lIKO2d1xozclOzgjXPYovJJIultzkMu34qQb9Sz/yilrbCgj8=
+-----END CERTIFICATE-----
+)EOF";
 
-// Local state of relay values
-bool relayStates[11] = {false, false, false, false, false, false, false, false, false, false, false};
+// Relays and LED
+const int relayPins[11] = {5,18,19,22,23,13,12,14,26,27,32};
+const int wifiLED       = 2;
 
-// WiFi connection status pin
-const int wifiStatusPin = 2;
+// SSE path & client
+String streamPath = "/relays.json?auth=" + String(firebaseAuth);
+WiFiClientSecure client;
+bool streamOpen = false;
 
-// Function to initialize relays
-void initRelays() {
-  for (int i = 0; i < 11; i++) {
-    pinMode(relayPins[i], OUTPUT);
-    digitalWrite(relayPins[i], HIGH); // Turn off all relays initially
-  }
-}
+// Timing
+unsigned long lastSseAttempt = 0;
+const unsigned long sseRetryInterval = 5000;
 
-// Function to update relay states
-void updateRelays(const JsonObject& json) {
-  for (int i = 0; i < 11; i++) {
-    String relayKey = "relay" + String(i + 1);
-    if (json.containsKey(relayKey)) {
-      bool state = json[relayKey];
-      digitalWrite(relayPins[i], state ? LOW : HIGH); // HIGH to turn off, LOW to turn on
-      relayStates[i] = state;
-      Serial.printf("Relay %d set to %s\n", i + 1, state ? "ON" : "OFF");
-    }
-  }
-}
+// Wi‑Fi reconnect state
+bool wifiReconnecting = false;
+unsigned long wifiReconnectStart = 0;
+const unsigned long wifiReconnectTimeout = 20000; // 20s
 
-// Function to handle Firebase data
-void handleFirebaseData(const JsonObject& json) {
-  if (json.containsKey("path") && json.containsKey("data")) {
-    String path = json["path"];
-    JsonVariant data = json["data"];
+// Buffer for SSE
+String eventData;
 
-    if (path == "/") {
-      // Full update
-      if (data.is<JsonObject>()) {
-        updateRelays(data.as<JsonObject>());
-      }
-    } else if (path.startsWith("/relay")) {
-      // Single relay update
-      int relayIndex = path.substring(6).toInt() - 1;
-      if (relayIndex >= 0 && relayIndex < 11 && data.is<bool>()) {
-        bool state = data.as<bool>();
-        digitalWrite(relayPins[relayIndex], state ? LOW : HIGH); // HIGH to turn off, LOW to turn on
-        relayStates[relayIndex] = state;
-        Serial.printf("Relay %d set to %s\n", relayIndex + 1, state ? "ON" : "OFF");
-      }
-    }
-  }
-}
+void handleFirebaseData(JsonObject json) {
+  if (!json.containsKey("path") || !json.containsKey("data")) return;
+  String path = json["path"].as<String>();
+  JsonVariant data = json["data"];
 
-// Function to connect to Firebase
-void connectToFirebase() {
-  HTTPClient http;
-  String url = String(firebaseHost) + "/relays.json?auth=" + firebaseAuth;
-  http.begin(url);
-  http.addHeader("Accept", "text/event-stream");
-  http.addHeader("Connection", "keep-alive");
-
-  int httpCode = http.GET();
-  if (httpCode == HTTP_CODE_OK) {
-    WiFiClient* stream = http.getStreamPtr();
-    while (stream->connected()) {
-      String line = stream->readStringUntil('\n');
-      if (line.startsWith("data: ")) {
-        line = line.substring(6);
-        Serial.printf("Received data: %s\n", line.c_str());
-        DynamicJsonDocument doc(1024);
-        DeserializationError error = deserializeJson(doc, line);
-        if (!error) {
-          JsonObject json = doc.as<JsonObject>();
-          handleFirebaseData(json);
-        } else {
-          Serial.printf("deserializeJson() failed: %s\n", error.c_str());
-        }
+  if (path == "/") {
+    JsonObject relays = data.as<JsonObject>();
+    for (int i = 0; i < 11; i++) {
+      String key = "relay" + String(i+1);
+      if (relays.containsKey(key)) {
+        bool st = relays[key];
+        digitalWrite(relayPins[i], st ? LOW : HIGH);
+        Serial.printf("Relay %d %s\n", i+1, st?"ON":"OFF");
       }
     }
-  } else {
-    Serial.printf("HTTP GET failed, error: %s\n", http.errorToString(httpCode).c_str());
+  } else if (path.startsWith("/relay")) {
+    int idx = path.substring(6).toInt()-1;
+    if (idx>=0 && idx<11) {
+      bool st = data.as<bool>();
+      digitalWrite(relayPins[idx], st?LOW:HIGH);
+      Serial.printf("Relay %d %s\n", idx+1, st?"ON":"OFF");
+    }
   }
-  http.end();
 }
 
 void setup() {
   Serial.begin(115200);
-  WiFi.begin(ssid, password);
-
-  pinMode(wifiStatusPin, OUTPUT);
-  digitalWrite(wifiStatusPin, LOW); // Initially set to LOW
-
-  Serial.print("Connecting to WiFi...");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.print(".");
+  pinMode(wifiLED, OUTPUT);
+  digitalWrite(wifiLED, LOW);
+  for (int i=0; i<11; i++) {
+    pinMode(relayPins[i], OUTPUT);
+    digitalWrite(relayPins[i], HIGH);
   }
-  Serial.println(" connected!");
-  digitalWrite(wifiStatusPin, HIGH); // Set to HIGH when connected
-
-  initRelays();
-  connectToFirebase();
+  // initial connect
+  WiFi.begin(ssid,password);
 }
 
 void loop() {
-  // Only handle WiFi reconnection
+  // 1) Handle Wi-Fi reconnect non-blocking
   if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("WiFi disconnected, reconnecting...");
-    digitalWrite(wifiStatusPin, LOW); // Set to LOW when disconnected
-    WiFi.reconnect();
-    delay(1000);
-  } else {
-    digitalWrite(wifiStatusPin, HIGH); // Set to HIGH when connected
-    Serial.print("hello");
-
-    // Reconnect to Firebase if necessary
-    connectToFirebase();
+    if (!wifiReconnecting) {
+      wifiReconnecting = true;
+      wifiReconnectStart = millis();
+      Serial.print("WiFi lost – reconnecting");
+      digitalWrite(wifiLED, LOW);
+      WiFi.disconnect();
+      WiFi.begin(ssid,password);
+    }
+    // Give up after timeout, then restart attempts
+    if (millis() - wifiReconnectStart > wifiReconnectTimeout) {
+      Serial.println(" – still down, retrying...");
+      wifiReconnectStart = millis();
+      WiFi.disconnect();
+      WiFi.begin(ssid,password);
+    }
+    // Once reconnected:
+    if (WiFi.status() == WL_CONNECTED) {
+      Serial.println("\nWiFi reconnected");
+      digitalWrite(wifiLED, HIGH);
+      wifiReconnecting = false;
+      // drop SSE so we’ll reconnect
+      streamOpen = false;
+      eventData = "";
+      lastSseAttempt = 0;
+    }
+    // skip SSE until Wi-Fi back
+    return;
   }
+
+  // 2) Ensure SSE connection exists (throttled)
+  if (!streamOpen && millis() - lastSseAttempt > sseRetryInterval) {
+    lastSseAttempt = millis();
+    Serial.println("Connecting SSE…");
+    client.stop();
+    client.setCACert(FIREBASE_ROOT_CA);  // before connect
+    if (client.connect(firebaseHost,443)) {
+      client.printf(
+        "GET %s HTTP/1.1\r\n"
+        "Host: %s\r\n"
+        "Accept: text/event-stream\r\n"
+        "Connection: keep-alive\r\n\r\n",
+        streamPath.c_str(), firebaseHost);
+      // discard headers
+      while (client.connected()) {
+        if (client.readStringUntil('\n') == "\r") break;
+      }
+      streamOpen = true;
+      Serial.println("SSE open");
+    } else {
+      Serial.println("SSE failed");
+    }
+  }
+
+  // 3) Read incoming SSE
+  if (streamOpen && client.connected()) {
+    while (client.available()) {
+      String line = client.readStringUntil('\n');
+      line.trim();
+      if (line.length()==0) {
+        // end of event
+        if (eventData.length()) {
+          StaticJsonDocument<1024> doc;
+          if (deserializeJson(doc, eventData) == DeserializationError::Ok) {
+            handleFirebaseData(doc.as<JsonObject>());
+          }
+          eventData = "";
+        }
+      }
+      else if (line.startsWith("data: ")) {
+        eventData += line.substring(6);
+      }
+    }
+  }
+  else if (streamOpen && !client.connected()) {
+    Serial.println("SSE dropped");
+    client.stop();
+    streamOpen = false;
+    lastSseAttempt = 0;
+  }
+
+  delay(10);  // small yield
 }
