@@ -1,54 +1,640 @@
-/* Container styling */
-#grid {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
-    width: 100%;
-    box-sizing: border-box;
+/* Main Container */
+.control-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    position: relative;
 }
 
-/* Grid layout for buttons */
-.grid_item {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
-    width: 100%;
-    max-width: 600px;
-    padding: 1rem;
-    box-sizing: border-box;
-}
-
-/* General button styles */
-.modern-button,
-.modern-button-OFF,
-.modern-button-ON {
-    padding: 1rem;
-    font-size: 1rem;
-    border: none;
+/* Toast Notification */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
     border-radius: 8px;
-    background-color: #f0f0f0;
-    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.3s ease, slideOut 0.3s ease 3.7s;
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.toast-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.toast-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.toast-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+/* Header */
+.control-header {
     text-align: center;
-    transition: 0.3s ease;
-    word-break: break-word;
+    margin-bottom: 40px;
 }
 
-/* Hover effect */
-.hover:hover {
-    transform: scale(1.05);
-    background-color: #e0e0e0;
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
 }
 
-/* ON and OFF button specific */
-.modern-button-OFF {
-    background-color: #ff4d4d;
+/* Header Controls Container */
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.control-header h1 {
+    font-size: 32px;
+    color: #222;
+    margin: 0 0 8px 0;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.control-header p {
+    font-size: 16px;
+    color: #666;
+    margin: 0 0 12px 0;
+}
+
+/* Connection Status Indicator */
+.connection-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.connection-status.status-connected {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.connection-status.status-disconnected {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+}
+
+.connection-status.status-connected .status-dot {
+    background-color: #28a745;
+}
+
+.connection-status.status-disconnected .status-dot {
+    background-color: #dc3545;
+    animation: none;
+}
+
+.status-text {
+    display: none;
+}
+
+@keyframes pulse-dot {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Sound Toggle Button */
+.sound-toggle {
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 50px;
+    min-height: 50px;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.sound-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+}
+
+.sound-toggle:active {
+    transform: scale(0.95);
+}
+
+.sound-icon {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: white;
 }
-.modern-button-ON {
-    background-color: #4caf50;
+
+.sound-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: white;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Pins Section */
+.pins-section {
+    margin-bottom: 40px;
+}
+
+.pins-section h2 {
+    font-size: 20px;
+    color: #222;
+    margin: 0 0 20px 0;
+    font-weight: 600;
+}
+
+/* Pins Grid */
+.pins-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Pin Card */
+.pin-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    min-height: 140px;
+}
+
+.pin-card:hover {
+    border-color: #007bff;
+    background: #ffffff;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.15);
+}
+
+/* Pin Indicator */
+.pin-indicator {
+    font-size: 40px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.pin-card:not(.active) .pin-indicator {
+    color: #ccc;
+}
+
+.pin-card.active .pin-indicator {
+    color: #28a745;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+/* Pin Name */
+.pin-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    margin-bottom: 6px;
+    line-height: 1.3;
+}
+
+/* Pin Status */
+.pin-status {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #f0f0f0;
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+.pin-card.active .pin-status {
+    background: #d4edda;
+    color: #28a745;
+}
+
+.pin-card:not(.active) .pin-status {
+    background: #f8d7da;
+    color: #dc3545;
+}
+
+/* Active State */
+.pin-card.active {
+    border-color: #28a745;
+    background: linear-gradient(135deg, #d4edda 0%, #ffffff 100%);
+}
+
+.pin-card.active:hover {
+    border-color: #218838;
+    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.15);
+}
+
+/* Batch Section */
+.batch-section {
+    margin-top: 30px;
+}
+
+.batch-section h2 {
+    font-size: 20px;
+    color: #222;
+    margin: 0 0 16px 0;
+    font-weight: 600;
+}
+
+.batch-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+/* Batch Button */
+.batch-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.batch-icon {
+    font-size: 20px;
+}
+
+.batch-off {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     color: white;
 }
+
+.batch-off:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+}
+
+.batch-off:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.batch-on {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: white;
+}
+
+.batch-on:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+}
+
+.batch-on:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .control-container {
+        padding: 15px 10px;
+    }
+
+    .header-top {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header-controls {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .control-header h1 {
+        font-size: 24px;
+    }
+
+    .control-header p {
+        font-size: 14px;
+    }
+
+    .connection-status {
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+
+    .sound-toggle {
+        min-width: 45px;
+        min-height: 45px;
+        padding: 8px 12px;
+    }
+
+    .sound-icon {
+        font-size: 20px;
+    }
+
+    .sound-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .pins-section h2,
+    .batch-section h2 {
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+
+    .pins-grid {
+        grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .pin-card {
+        min-height: 95px;
+        padding: 10px;
+    }
+
+    .pin-indicator {
+        font-size: 28px;
+        margin-bottom: 4px;
+    }
+
+    .pin-name {
+        font-size: 11px;
+        margin-bottom: 3px;
+    }
+
+    .pin-status {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+
+    .batch-buttons {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .batch-btn {
+        padding: 10px 16px;
+        font-size: 12px;
+    }
+
+    .batch-icon {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .control-container {
+        padding: 10px 8px;
+        margin: 0;
+    }
+
+    .toast {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        font-size: 13px;
+        padding: 12px 16px;
+    }
+
+    .control-header {
+        margin-bottom: 20px;
+    }
+
+    .header-top {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-controls {
+        width: 100%;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .control-header h1 {
+        font-size: 18px;
+    }
+
+    .control-header p {
+        font-size: 12px;
+    }
+
+    .connection-status {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+
+    .sound-toggle {
+        min-width: 42px;
+        min-height: 42px;
+        padding: 6px 10px;
+    }
+
+    .sound-icon {
+        font-size: 18px;
+    }
+
+    .sound-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .pins-section {
+        margin-bottom: 20px;
+    }
+
+    .pins-section h2,
+    .batch-section h2 {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .pins-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .pin-card {
+        min-height: 85px;
+        padding: 8px;
+    }
+
+    .pin-indicator {
+        font-size: 24px;
+        margin-bottom: 3px;
+    }
+
+    .pin-name {
+        font-size: 10px;
+        margin-bottom: 2px;
+        line-height: 1.2;
+    }
+
+    .pin-status {
+        font-size: 9px;
+        padding: 1px 4px;
+    }
+
+    .batch-section {
+        margin-top: 15px;
+    }
+
+    .batch-buttons {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .batch-btn {
+        padding: 10px 12px;
+        font-size: 11px;
+    }
+
+    .batch-icon {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 320px) {
+    .pins-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pin-card {
+        min-height: 75px;
+        padding: 6px;
+    }
+
+    .pin-indicator {
+        font-size: 20px;
+    }
+
+    .pin-name {
+        font-size: 9px;
+    }
+
+    .pin-status {
+        font-size: 8px;
+    }
+
+    .sound-toggle {
+        min-width: 40px;
+        min-height: 40px;
+    }
+
+    .sound-icon {
+        font-size: 16px;
+    }
+
+    .sound-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .connection-status {
+        font-size: 9px;
+        padding: 3px 6px;
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+    }
+}
+
 .modern-button-OFF:hover {
     background-color: #cc0000;
 }
