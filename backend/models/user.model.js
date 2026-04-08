@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
-
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs"; // ✅ changed
 
 const UserSchema = new mongoose.Schema(
 	{
@@ -35,18 +34,24 @@ const UserSchema = new mongoose.Schema(
 	}
 );
 
+// 🔐 Hash password before saving
 UserSchema.pre("save", async function (next) {
-	// if(!this.isModified("password",)) return next();  //this is also a way to do same work
-	if (this.isModified("password")) {
+	if (!this.isModified("password")) return next(); // ✅ safer version
+
+	try {
 		this.password = await bcrypt.hash(this.password, 10);
-		return next();
+		next();
+	} catch (error) {
+		next(error);
 	}
 });
 
+// 🔍 Compare password
 UserSchema.methods.isPasswordCorrect = async function (password) {
 	return await bcrypt.compare(password, this.password);
 };
 
+// 🔑 Generate Access Token
 UserSchema.methods.genrateAccessToken = function () {
 	return jwt.sign(
 		{
@@ -60,6 +65,8 @@ UserSchema.methods.genrateAccessToken = function () {
 		}
 	);
 };
+
+// 🔁 Generate Refresh Token
 UserSchema.methods.genrateRefreshToken = function () {
 	return jwt.sign(
 		{
@@ -73,4 +80,3 @@ UserSchema.methods.genrateRefreshToken = function () {
 };
 
 export const User = mongoose.model("User", UserSchema);
-
